@@ -31,7 +31,8 @@ export function PublicPage({
       <header className="border-b border-border">
         <div className={cn('mx-auto flex h-14 w-full items-center px-4', column)}>
           {/* Decoration: blank until the name loads, and blank if it never does. */}
-          <span className="truncate text-[15px] font-semibold">{displayName ?? ''}</span>
+          <img src="/assets/brand/logomark.svg" alt="" className="mr-2 h-7 w-7 object-contain dark:invert" />
+          <span className="truncate text-[15px] font-semibold">{displayName ?? 'MYS Designs'}</span>
         </div>
       </header>
       <main className={cn('mx-auto w-full min-w-0 flex-1 px-4 py-8', column)}>

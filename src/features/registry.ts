@@ -67,7 +67,7 @@ function collect<T>(pick: (feature: FeatureManifest) => readonly T[] | undefined
 }
 
 /** Rail items, in order (group them with navGroups). */
-export const ownerNav: OwnerNavItem[] = collect((f) => f.ownerNav).sort(byOrderThenLabel);
+export const ownerNav: OwnerNavItem[] = collect((f) => f.ownerNav).filter((item) => ['Contacts', 'Documents', 'E-sign', 'Settings'].includes(item.label)).map((item) => ({ ...item, label: item.label === 'Contacts' ? 'Clients' : item.label === 'Documents' ? 'Files' : item.label === 'E-sign' ? 'Contracts' : item.label })).sort(byOrderThenLabel);
 /** Owner routes inside the shell, outside the workspace. */
 export const ownerRoutes: RouteObject[] = collect((f) => f.ownerRoutes);
 /** Owner routes inside the workspace (the client panel and the tab strip), inside the shell. */
@@ -85,11 +85,11 @@ export const WORKSPACE_LAYOUT: RouteObject = { children: workspaceRoutes };
  */
 export const ownerRouteTree: RouteObject[] = [...ownerRoutes, WORKSPACE_LAYOUT];
 /** The workspace's tab strip, in order. */
-export const workspaceTabs: WorkspaceTab[] = collect((f) => f.workspaceTabs).sort(byOrderThenLabel);
+export const workspaceTabs: WorkspaceTab[] = collect((f) => f.workspaceTabs).filter((tab) => ['pipeline', 'board', 'documents', 'messages', 'esign'].includes(tab.key)).sort(byOrderThenLabel);
 /** The bottom bar's figures, in order (the bar draws `waiting` before `total`). */
 export const shellCounts: ShellCount[] = collect((f) => f.shellCounts).sort(byOrderThenLabel);
 /** The New menu's entries, in order. */
-export const newMenu: NewMenuItem[] = collect((f) => f.newMenu).sort(byOrderThenLabel);
+export const newMenu: NewMenuItem[] = collect((f) => f.newMenu).filter((item) => ['contact', 'work-item', 'request', 'envelope'].includes(item.key)).map((item) => ({ ...item, label: item.key === 'contact' ? 'Client' : item.key === 'work-item' ? 'Project' : item.key === 'envelope' ? 'Contract' : item.label })).sort(byOrderThenLabel);
 /** Owner routes without the shell. */
 export const ownerStandaloneRoutes: RouteObject[] = collect((f) => f.ownerStandaloneRoutes);
 /** Portal tabs, in order. */

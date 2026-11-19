@@ -1,7 +1,6 @@
 import { Fragment, Suspense, useEffect, useId, useState } from 'react';
 import { Link, Outlet, matchPath, useLocation } from 'react-router-dom';
 import { ChevronDown, LogOut, Menu, Moon, Settings, Sun } from 'lucide-react';
-import { BottomBar } from '@/components/layout/BottomBar';
 import { NewMenu } from '@/components/layout/NewMenu';
 import { PAGE } from '@/components/layout/page';
 import { RailSearch } from '@/components/layout/RailSearch';
@@ -166,16 +165,24 @@ function DrawerNav({ groups, onNavigate }: { groups: NavGroup[]; onNavigate?: ()
 
 /** The phone drawer's contents: the organization, New, the labelled nav, light/dark, the account. */
 function DrawerBody({ orgName, email, onSignOut, theme, onNavigate }: ShellProps & { theme: ThemeControls; onNavigate: () => void }) {
-  const name = orgName ?? 'Open CRM';
+  const name = orgName ?? 'MYS Designs';
   return (
     <div className="flex h-full min-h-0 flex-col bg-sidebar text-sidebar-foreground">
       {/* Room on the right for the drawer's close button. */}
       <Link to="/" onClick={onNavigate} className="flex h-14 shrink-0 items-center gap-2 px-3 pr-10">
-        <Monogram initials={initialsOf(name)} size="md" className="rounded-md" />
+        <img src="/assets/brand/logomark.svg" alt="" className="h-7 w-7 object-contain dark:invert" />
         <span className="min-w-0 truncate text-[13px] font-semibold">{name}</span>
       </Link>
       <div className="shrink-0 px-2 pb-1">
         <NewMenu />
+      </div>
+      <div className="shrink-0 px-3 pb-2">
+        <p className="mb-1 px-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">MYS tools</p>
+        <div className="flex flex-col gap-1">
+          <a href="https://apps.mysdesigns.co.uk/company-scout" target="_blank" rel="noreferrer" className="rounded-md px-2 py-1.5 text-[12px] text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground">Company Scout</a>
+          <a href="https://apps.mysdesigns.co.uk/ai" target="_blank" rel="noreferrer" className="rounded-md px-2 py-1.5 text-[12px] text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground">Ask MYS AI</a>
+          <a href="https://apps.mysdesigns.co.uk" target="_blank" rel="noreferrer" className="rounded-md px-2 py-1.5 text-[12px] text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground">All MYS Apps</a>
+        </div>
       </div>
       <ScrollArea fitWidth className="min-h-0 flex-1">
         <DrawerNav groups={navGroups()} onNavigate={onNavigate} />
@@ -227,11 +234,11 @@ function RailItem({ item }: { item: OwnerNavItem }) {
 
 /** The desktop rail: never folds, never labels; every group is a run of icons under a hairline. */
 function Rail({ orgName, email, onSignOut, theme }: ShellProps & { theme: ThemeControls }) {
-  const name = orgName ?? 'Open CRM';
+  const name = orgName ?? 'MYS Designs';
   return (
     <div className="flex h-full min-h-0 flex-col items-center gap-1 bg-sidebar py-2 text-sidebar-foreground">
       <Link to="/" aria-label={name} title={name} className="mb-1 flex size-9 items-center justify-center rounded-md hover:bg-sidebar-accent">
-        <Monogram initials={initialsOf(name)} size="md" className="rounded-md" />
+        <img src="/assets/brand/logomark.svg" alt="" className="h-7 w-7 object-contain dark:invert" />
       </Link>
       <NewMenu compact />
       <RailSearch />
@@ -305,8 +312,11 @@ export function AppShell(props: ShellProps) {
     <ThemeContext.Provider value={theme}>
       <TooltipProvider delayDuration={300}>
         <div className="flex min-h-svh w-full bg-background text-foreground">
-          <aside className="sticky top-0 hidden h-svh w-14 shrink-0 border-r border-sidebar-border md:block">
+          <aside className="sticky top-0 hidden h-svh w-14 shrink-0 border-r border-sidebar-border md:max-lg:block">
             <Rail {...props} theme={theme} />
+          </aside>
+          <aside className="sticky top-0 hidden h-svh w-60 shrink-0 border-r border-sidebar-border lg:block">
+            <DrawerBody {...props} theme={theme} onNavigate={() => {}} />
           </aside>
 
           {/* overflow-x-clip, not overflow-hidden: no sideways scroll, and no scroll container
@@ -315,7 +325,7 @@ export function AppShell(props: ShellProps) {
             data-bounded={bounded || undefined}
             data-workspace={workspace || undefined}
             className={cn(
-              'flex min-w-0 flex-1 flex-col overflow-x-clip text-[14px] leading-[1.5] [--bottombar-h:0px] [--topbar-h:2.5rem] md:[--bottombar-h:1.75rem]',
+              'flex min-w-0 flex-1 flex-col overflow-x-clip text-[14px] leading-[1.5] [--bottombar-h:0px] [--topbar-h:2.5rem]',
               workspace ? 'md:[--topbar-h:0px]' : 'md:[--topbar-h:3rem]',
               bounded ? 'h-svh overflow-hidden' : 'min-h-svh',
             )}
@@ -344,7 +354,6 @@ export function AppShell(props: ShellProps) {
                 <Outlet />
               </Suspense>
             </div>
-            <BottomBar />
           </main>
         </div>
 

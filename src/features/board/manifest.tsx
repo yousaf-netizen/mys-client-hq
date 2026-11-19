@@ -8,7 +8,7 @@ const AddWorkItemDialog = lazyNamed(() => import('./components/AddWorkItemDialog
 
 export const manifest: FeatureManifest = {
   id: 'board',
-  workspaceTabs: [{ key: 'board', label: 'Board', icon: SquareKanban, path: '/board', order: 10 }],
+  workspaceTabs: [{ key: 'board', label: 'Projects', icon: SquareKanban, path: '/board', order: 10 }],
   workspaceRoutes: [
     // The lanes scroll inside the page, never the page itself.
     { path: 'board', element: <BoardPage />, handle: BOUNDED_PAGE },

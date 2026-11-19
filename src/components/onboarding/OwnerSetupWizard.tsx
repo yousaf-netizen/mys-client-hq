@@ -30,7 +30,7 @@ export function OwnerSetupWizard({ onComplete }: Props) {
   const [senderName, setSenderName] = useState('MYS Designs');
   const [contactEmail, setContactEmail] = useState('');
   const [postalAddress, setPostalAddress] = useState('');
-  const [primaryColor, setPrimaryColor] = useState('#171717');
+  const [primaryColor, setPrimaryColor] = useState('#9643ff');
 
   useEffect(() => {
     if (!profile) return;
@@ -39,7 +39,7 @@ export function OwnerSetupWizard({ onComplete }: Props) {
     setSenderName(profile.sender_name ?? 'MYS Designs');
     setContactEmail(profile.contact_email ?? '');
     setPostalAddress(profile.postal_address ?? '');
-    setPrimaryColor(brandColor(profile) ?? '#171717');
+    setPrimaryColor(brandColor(profile) ?? '#9643ff');
   }, [profile]);
 
   const finish = async (event?: FormEvent) => {
@@ -119,7 +119,7 @@ export function OwnerSetupWizard({ onComplete }: Props) {
 
           {step === 1 && (
             <div className="grid gap-5">
-              <div className="grid gap-1.5 max-w-sm"><Label htmlFor="setup-colour">Primary brand colour</Label><div className="flex items-center gap-3"><Input id="setup-colour" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} maxLength={7} /><input aria-label="Choose brand colour" type="color" value={/^#[0-9a-fA-F]{6}$/.test(primaryColor) ? primaryColor : '#171717'} onChange={(e) => setPrimaryColor(e.target.value)} className="h-10 w-12 cursor-pointer rounded-md border bg-transparent p-1" /></div><p className="text-xs text-muted-foreground">You can change this and upload your logo later in Settings.</p></div>
+              <div className="grid gap-1.5 max-w-sm"><Label htmlFor="setup-colour">Primary brand colour</Label><div className="flex items-center gap-3"><Input id="setup-colour" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} maxLength={7} /><input aria-label="Choose brand colour" type="color" value={/^#[0-9a-fA-F]{6}$/.test(primaryColor) ? primaryColor : '#9643ff'} onChange={(e) => setPrimaryColor(e.target.value)} className="h-10 w-12 cursor-pointer rounded-md border bg-transparent p-1" /></div><p className="text-xs text-muted-foreground">You can change this and upload your logo later in Settings.</p></div>
               <div className="rounded-lg border bg-muted/30 p-4"><p className="text-sm font-medium">Your workspace</p><div className="mt-3 flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-lg border bg-card font-semibold">MYS</div><div><p className="font-medium">{displayName || 'MYS Designs'}</p><p className="text-xs text-muted-foreground">Private client workspace</p></div></div></div>
               <div className="flex justify-between"><Button type="button" variant="outline" onClick={() => setStep(0)}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button><Button type="button" onClick={() => setStep(2)}>Continue <ArrowRight className="ml-2 h-4 w-4" /></Button></div>
             </div>
