@@ -39,13 +39,13 @@ export function EsignPage() {
   return (
     <div className={PAGE}>
       <PageHeader
-        title="E-sign"
-        subtitle="Every envelope sent for signature, and where each one stands."
+        title="Contracts"
+        subtitle="Create, send and track client agreements."
         actions={
           <Button asChild size="sm">
             <Link to={links.newEnvelope()}>
               <Plus aria-hidden="true" />
-              New envelope
+              New contract
             </Link>
           </Button>
         }
@@ -63,7 +63,7 @@ export function NewEnvelopePage() {
   const document = params.get('document');
   return (
     <div className={PAGE}>
-      <PageHeader title="New envelope" />
+      <PageHeader title="New contract" />
       <div className="mx-auto w-full max-w-xl">
         <NewEnvelopeForm contactId={contact && isUuid(contact) ? contact : null} documentId={document && isUuid(document) ? document : null} />
       </div>
@@ -99,7 +99,7 @@ export function EnvelopePage() {
   if (body || !envelope.data) {
     return (
       <div className={PAGE}>
-        <PageHeader title="Envelope" />
+        <PageHeader title="Contract" />
         {body}
       </div>
     );
@@ -121,12 +121,12 @@ export function EsignTab({ contactId }: ContactTabProps) {
   const rows = envelopes.data ?? [];
   return (
     <Panel
-      title="Envelopes"
+      title="Contracts"
       action={
         <Button asChild size="xs">
           <Link to={links.newEnvelope({ contactId })}>
             <Plus aria-hidden="true" />
-            New envelope
+            New contract
           </Link>
         </Button>
       }
@@ -139,7 +139,7 @@ export function EsignTab({ contactId }: ContactTabProps) {
           Could not load the envelopes: {getErrorMessage(envelopes.error)}
         </p>
       ) : rows.length === 0 ? (
-        <p className="p-4 text-[13px] text-muted-foreground">No envelopes for this contact yet.</p>
+        <p className="p-4 text-[13px] text-muted-foreground">No contracts for this client yet.</p>
       ) : (
         <ScrollArea horizontal>
           <Table>
