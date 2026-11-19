@@ -128,7 +128,7 @@ export function OwnerSetupWizard({ onComplete }: Props) {
           {step === 2 && (
             <div className="grid gap-5">
               <div className="rounded-lg border p-4"><div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 h-5 w-5" /><div><p className="font-medium">Protect your account</p><p className="mt-1 text-sm text-muted-foreground">After setup, open Settings → Security and enable an authenticator app for two-factor authentication. Keep your recovery codes somewhere safe.</p></div></div></div>
-              <div className="rounded-lg border p-4"><div className="flex items-start gap-3"><Check className="mt-0.5 h-5 w-5" /><div><p className="font-medium">Ready to open MYS Client HQ</p><p className="mt-1 text-sm text-muted-foreground">Your business identity and brand colour will be saved. You can change them any time in Settings.</p></div></div></div>
+              <div className="rounded-lg border p-4"><div className="flex items-start gap-3"><Check className="mt-0.5 h-5 w-5" /><div><p className="font-medium">Ready to open Team HQ</p><p className="mt-1 text-sm text-muted-foreground">Your business identity and brand colour will be saved. You can change them any time in Settings.</p></div></div></div>
               <div className="flex justify-between"><Button type="button" variant="outline" onClick={() => setStep(1)} disabled={saving}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button><Button type="button" onClick={() => void finish()} disabled={saving}>{saving ? 'Saving...' : 'Finish setup'} <Check className="ml-2 h-4 w-4" /></Button></div>
             </div>
           )}

@@ -32,6 +32,7 @@ import {
   type WorkspaceRouteHandle,
   type WorkspaceTab,
 } from '@/features/types';
+import { CLIENT_TABS, COUNTS, HIDDEN_FEATURES, NEW_MENU, PORTAL_TABS, RAIL, SETTINGS, TABS, pick } from '@/features/teamhq';
 
 /**
  * Every feature, and the one place the app learns what exists. FROZEN: a feature changes
@@ -39,7 +40,7 @@ import {
  * app, the portal and the public router read the lists below and nothing else, so no other
  * file names a feature. Display order comes from each entry's `order`, not from this list.
  */
-export const FEATURES: readonly FeatureManifest[] = [
+const ALL_FEATURES: readonly FeatureManifest[] = [
   crm,
   board,
   requests,
@@ -53,6 +54,10 @@ export const FEATURES: readonly FeatureManifest[] = [
   ops,
   settings,
 ];
+/** Team HQ (src/features/teamhq.ts) leaves some features out of the simple edition. */
+const HIDDEN = new Set<string>(HIDDEN_FEATURES);
+const KEYS = new Map<FeatureManifest, string>([[email, "email"], [marketing, "marketing"], [ops, "ops"]]);
+export const FEATURES: readonly FeatureManifest[] = ALL_FEATURES.filter((f) => !HIDDEN.has(KEYS.get(f) ?? ""));
 
 function byOrderThenLabel<T extends { order: number; label: string }>(a: T, b: T): number {
   return a.order - b.order || a.label.localeCompare(b.label);
@@ -67,7 +72,7 @@ function collect<T>(pick: (feature: FeatureManifest) => readonly T[] | undefined
 }
 
 /** Rail items, in order (group them with navGroups). */
-export const ownerNav: OwnerNavItem[] = collect((f) => f.ownerNav).filter((item) => ['Contacts', 'Documents', 'E-sign', 'Settings'].includes(item.label)).map((item) => ({ ...item, label: item.label === 'Contacts' ? 'Clients' : item.label === 'Documents' ? 'Files' : item.label === 'E-sign' ? 'Contracts' : item.label })).sort(byOrderThenLabel);
+export const ownerNav: OwnerNavItem[] = pick(collect((f) => f.ownerNav), RAIL, (i) => i.label).sort(byOrderThenLabel);
 /** Owner routes inside the shell, outside the workspace. */
 export const ownerRoutes: RouteObject[] = collect((f) => f.ownerRoutes);
 /** Owner routes inside the workspace (the client panel and the tab strip), inside the shell. */
@@ -85,15 +90,15 @@ export const WORKSPACE_LAYOUT: RouteObject = { children: workspaceRoutes };
  */
 export const ownerRouteTree: RouteObject[] = [...ownerRoutes, WORKSPACE_LAYOUT];
 /** The workspace's tab strip, in order. */
-export const workspaceTabs: WorkspaceTab[] = collect((f) => f.workspaceTabs).filter((tab) => ['pipeline', 'board', 'documents', 'messages', 'esign'].includes(tab.key)).sort(byOrderThenLabel);
+export const workspaceTabs: WorkspaceTab[] = pick(collect((f) => f.workspaceTabs), TABS, (t) => t.key).sort(byOrderThenLabel);
 /** The bottom bar's figures, in order (the bar draws `waiting` before `total`). */
-export const shellCounts: ShellCount[] = collect((f) => f.shellCounts).sort(byOrderThenLabel);
+export const shellCounts: ShellCount[] = pick(collect((f) => f.shellCounts), COUNTS, (c) => c.key).sort(byOrderThenLabel);
 /** The New menu's entries, in order. */
-export const newMenu: NewMenuItem[] = collect((f) => f.newMenu).filter((item) => ['contact', 'work-item', 'request', 'envelope'].includes(item.key)).map((item) => ({ ...item, label: item.key === 'contact' ? 'Client' : item.key === 'work-item' ? 'Project' : item.key === 'envelope' ? 'Contract' : item.label })).sort(byOrderThenLabel);
+export const newMenu: NewMenuItem[] = pick(collect((f) => f.newMenu), NEW_MENU, (i) => i.key).sort(byOrderThenLabel);
 /** Owner routes without the shell. */
 export const ownerStandaloneRoutes: RouteObject[] = collect((f) => f.ownerStandaloneRoutes);
 /** Portal tabs, in order. */
-export const portalTabs: PortalTab[] = collect((f) => f.portalTabs).sort(byOrderThenLabel);
+export const portalTabs: PortalTab[] = pick(collect((f) => f.portalTabs), PORTAL_TABS, (t) => t.label).sort(byOrderThenLabel);
 /** Portal routes, relative to /portal. */
 export const portalRoutes: RouteObject[] = collect((f) => f.portalRoutes);
 /** Cards on the portal's Home page, in order. */
@@ -103,7 +108,7 @@ export const portalProfileSections: PortalProfileSection[] = collect((f) => f.po
 /** Routes that need no session. */
 export const publicRoutes: RouteObject[] = collect((f) => f.publicRoutes);
 /** Tabs on the contact record, in order. */
-export const contactTabs: ContactTab[] = collect((f) => f.contactTabs).sort(byOrderThenLabel);
+export const contactTabs: ContactTab[] = pick(collect((f) => f.contactTabs), CLIENT_TABS, (t) => t.key).sort(byOrderThenLabel);
 /** Buttons in the contact record's header, in order. */
 export const contactHeaderActions: ContactHeaderAction[] = collect((f) => f.contactHeaderActions).sort(byOrderThenKey);
 /** Panels in the contact record's right bar, in order. */
@@ -111,7 +116,7 @@ export const contactSidePanels: ContactSidePanel[] = collect((f) => f.contactSid
 /** Cards on the contact record's Activity tab, in order. */
 export const contactActivityCards: ContactActivityCard[] = collect((f) => f.contactActivityCards).sort(byOrderThenKey);
 /** Settings sections, in order. */
-export const settingsSections: SettingsSection[] = collect((f) => f.settingsSections).sort(byOrderThenLabel);
+export const settingsSections: SettingsSection[] = pick(collect((f) => f.settingsSections), SETTINGS, (x) => x.key).sort(byOrderThenLabel);
 /** The portal's frame, from the one feature that provides it (registry.test.ts allows one); null for none. */
 export const portalLayout: LazyComponent<ShellProps> | null = FEATURES.find((f) => f.portalLayout)?.portalLayout ?? null;
 
