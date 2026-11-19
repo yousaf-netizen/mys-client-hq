@@ -2,6 +2,7 @@ import { Suspense, useEffect, useState, type ReactNode } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { MfaChallenge } from '@/components/auth/MfaChallenge';
 import { SignInForm } from '@/components/auth/SignInForm';
+import { OwnerSetupWizard } from '@/components/onboarding/OwnerSetupWizard';
 import { Button } from '@/components/ui/button';
 import { lazyNamed } from '@/features/lazy';
 import { lockEncryptionSession } from '@/features/messages/keySession';
@@ -59,19 +60,35 @@ function Gate() {
   const { session, isLoadingAuth, mfaGate, principal, logout } = useAuth();
   const orgName = useOrgName();
 
-  // Nothing one principal fetched may outlive it: the cache is cleared, and the unlocked
-  // messages key dropped, whenever the signed-in user or what the database says about them
-  // changes (sign-out included). The app renders only once the clear has run for the
-  // CURRENT principal, so a screen's first queries can never be wiped by, or mixed with, a
-  // clear meant for the previous one.
   const userId = session?.user?.id ?? null;
   const principalKey = `${userId ?? ''}:${principal}`;
   const [clearedFor, setClearedFor] = useState<string | null>(null);
+  const [setupState, setSetupState] = useState<'checking' | 'required' | 'complete' | 'error'>('checking');
+
   useEffect(() => {
     queryClient.clear();
     lockEncryptionSession();
     setClearedFor(principalKey);
   }, [principalKey]);
+
+  useEffect(() => {
+    if (principal !== 'owner') {
+      setSetupState('complete');
+      return;
+    }
+    let cancelled = false;
+    setSetupState('checking');
+    void getSupabase().from('org_profile').select('brand').eq('id', true).maybeSingle().then(({ data, error }) => {
+      if (cancelled) return;
+      if (error || !data) {
+        setSetupState('error');
+        return;
+      }
+      const brand = data.brand && typeof data.brand === 'object' ? data.brand as Record<string, unknown> : {};
+      setSetupState(typeof brand.setup_completed_at === 'string' ? 'complete' : 'required');
+    });
+    return () => { cancelled = true; };
+  }, [principal, userId]);
 
   if (isLoadingAuth) return <Waiting text="Loading..." />;
   if (!session) {
@@ -81,7 +98,6 @@ function Gate() {
       </Centered>
     );
   }
-  // Fail closed: nothing protected renders until every check has an answer.
   if (mfaGate === 'checking') return <Waiting text="Checking your session..." />;
   if (mfaGate === 'required') {
     return (
@@ -95,6 +111,11 @@ function Gate() {
   const shell: ShellProps = { orgName, email: session.user.email ?? '', onSignOut: () => void logout() };
 
   if (principal === 'owner') {
+    if (setupState === 'checking') return <Waiting text="Preparing your workspace..." />;
+    if (setupState === 'error') {
+      return <Centered><div className="max-w-md text-center"><p>We could not check your workspace setup.</p><p className="mt-2 text-sm text-muted-foreground">Refresh the page. If the problem continues, contact support before adding client data.</p><Button className="mt-4" variant="outline" onClick={() => void logout()}>Sign out</Button></div></Centered>;
+    }
+    if (setupState === 'required') return <OwnerSetupWizard onComplete={() => setSetupState('complete')} />;
     return (
       <Suspense fallback={<Waiting text="Loading..." />}>
         <OwnerApp {...shell} />
@@ -130,10 +151,6 @@ function Gate() {
   );
 }
 
-/**
- * Everything that needs a session, loaded only when a URL is not a public route: the
- * Supabase client, the auth provider, the signed-in query cache and the gate.
- */
 export function AuthenticatedApp() {
   if (!supabaseConfigured) {
     return (
