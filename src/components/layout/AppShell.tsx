@@ -180,7 +180,7 @@ function DrawerBody({ orgName, email, onSignOut, theme, onNavigate }: ShellProps
         <p className="mb-1 px-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">MYS tools</p>
         <div className="flex flex-col gap-1">
           <a href="https://apps.mysdesigns.co.uk/company-scout" target="_blank" rel="noreferrer" className="rounded-md px-2 py-1.5 text-[12px] text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground">Company Scout</a>
-          <a href="https://apps.mysdesigns.co.uk/ai" target="_blank" rel="noreferrer" className="rounded-md px-2 py-1.5 text-[12px] text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground">Ask MYS AI</a>
+          <a href="https://apps.mysdesigns.co.uk" target="_blank" rel="noreferrer" className="rounded-md px-2 py-1.5 text-[12px] text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground">Ask MYS AI</a>
           <a href="https://apps.mysdesigns.co.uk" target="_blank" rel="noreferrer" className="rounded-md px-2 py-1.5 text-[12px] text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground">All MYS Apps</a>
         </div>
       </div>
